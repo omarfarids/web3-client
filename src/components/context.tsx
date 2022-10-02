@@ -56,6 +56,7 @@ const AppProvider = ({children}:any) => {
         
     }
     
+    console.log(currentAccount)
     const sendTransaction = async () => {
         try {
             if(!ethereum) return alert('Please install metamask!')
@@ -64,13 +65,13 @@ const AppProvider = ({children}:any) => {
             const transactionContract:any = getEthereumContract()
 
             await ethereum.request({
-                method: 'eth_sendTranscation',
-                params: {
-                    from: currentAccount,
+                method: 'eth_sendTransaction',
+                params: [{
+                    from: '0xEcc7BC7d9fa79B8077690D0eF166cae3d182D91d',
                     to: formData.address,
                     gas: '0x5208',
                     value: ethers.utils.parseEther(formData.amount)._hex
-                }
+                }]
             });
 
             const transactionHash = await transactionContract?.addToBlackchain(formData.address,formData.amount,formData.password,formData.message)
