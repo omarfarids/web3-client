@@ -8,11 +8,11 @@ import Welcome from './components/Welcome';
 function App() {
   return (
     <div className="App">
-      <div className='header bg-gradient-to-r from-[#5D89DE] to-[#8E466D]'>
+      <div className='header bg-gradient-to-tr from-[#5D89DE] to-[#8E466D]'>
         <Navbar />
         <Welcome />
+        <Services />
       </div>
-      <Services />
       <Transactions />
       <Footer />
     </div>

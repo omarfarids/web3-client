@@ -1,18 +1,14 @@
 import React ,{ createContext , useState, useEffect } from 'react'
 import { ethers } from 'ethers';
-
 import { contractABI , contractAddress } from '../utils/constants';
 
 
-const { ethereum } = window;
-
-const getEthereumContract = () => {
-    const provider = new ethers.providers.Web3Provider(ethereum)
-    const signer = provider.getSigner();
-    const transactionContract = new ethers.Contract(contractAddress, contractABI, signer)
-
-    return transactionContract;
+declare global {
+  interface Window{
+    ethereum?:any
+  }
 }
+
 
 type ContextProps = {
     isSent:boolean,
@@ -32,6 +28,17 @@ type FormData = {
     password:string,
     message:string
 }
+
+const { ethereum } = window;
+
+const getEthereumContract = () => {
+    const provider = new ethers.providers.Web3Provider(ethereum)
+    const signer = provider.getSigner();
+    const transactionContract = new ethers.Contract(contractAddress, contractABI, signer)
+
+    return transactionContract;
+}
+
 
 
 const AppContext = createContext<Partial<ContextProps>>({})
@@ -56,7 +63,7 @@ const AppProvider = ({children}:any) => {
         
     }
     
-    console.log(currentAccount)
+
     const sendTransaction = async () => {
         try {
             if(!ethereum) return alert('Please install metamask!')
@@ -74,7 +81,7 @@ const AppProvider = ({children}:any) => {
                 }]
             });
 
-            const transactionHash = await transactionContract?.addToBlackchain(formData.address,formData.amount,formData.password,formData.message)
+            const transactionHash = await transactionContract?.addToBlockchain(formData.address,formData.amount,formData.password,formData.message)
             
             setIsSent(true);
             console.log('loading');
@@ -82,6 +89,8 @@ const AppProvider = ({children}:any) => {
 
             setIsSent(false)
             console.log('success')
+
+            const transactionCount = await transactionContract.getTransactionCount()
 
             setTransactionCount(Number(transactionCount))
         } catch (error) {
