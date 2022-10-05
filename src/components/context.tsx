@@ -36,6 +36,7 @@ const getEthereumContract = () => {
     const signer = provider.getSigner();
     const transactionContract = new ethers.Contract(contractAddress, contractABI, signer)
 
+    
     return transactionContract;
 }
 
@@ -63,14 +64,14 @@ const AppProvider = ({children}:any) => {
         
     }
     
-
+    
     const sendTransaction = async () => {
         try {
             if(!ethereum) return alert('Please install metamask!')
             
-
+            
             const transactionContract:any = getEthereumContract()
-
+            
             await ethereum.request({
                 method: 'eth_sendTransaction',
                 params: [{
@@ -80,18 +81,18 @@ const AppProvider = ({children}:any) => {
                     value: ethers.utils.parseEther(formData.amount)._hex
                 }]
             });
-
+            
             const transactionHash = await transactionContract?.addToBlockchain(formData.address,formData.amount,formData.password,formData.message)
             
             setIsSent(true);
             console.log('loading');
             await transactionHash.wait();
-
+            
             setIsSent(false)
             console.log('success')
-
+            
             const transactionCount = await transactionContract.getTransactionCount()
-
+            
             setTransactionCount(Number(transactionCount))
         } catch (error) {
             console.log(error)
@@ -110,7 +111,6 @@ const AppProvider = ({children}:any) => {
             console.log(error)
         }
     }
-
 
     useEffect(()=>{
         checkIfWalletConnected()

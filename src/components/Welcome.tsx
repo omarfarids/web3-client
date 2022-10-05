@@ -44,10 +44,10 @@ function Welcome() {
 
 
   return (
-    <div className='px-3 py-10 text-white md:flex flex-row items-center justify-center gap-10'>
+    <div className='px-3 py-10 md:my-10 text-white md:flex flex-row items-center justify-center gap-10'>
       <div className='md:w-2/6'>
-        <h1 className='text-4xl font-medium'>Send Crypto across the world</h1>
-        <p className='py-2 antialiased'>Explore the crypto world. Buy and sell cryptocurrencies easily on Krypto</p>
+        <h1 className='font-medium center'>Send Crypto across the world</h1>
+        <p className='py-2 antialiased center'>Explore the crypto world. Buy and sell cryptocurrencies easily on Krypto</p>
         {!currentAccount && <button onClick={connectWallet} className='bg-[#009DF1] w-96 md:w-4/6 px-7 py-1 rounded-full hover:bg-[#46b6f3]'>Connect Wallet</button>}
       </div>
       <div className='bg-purple-100/50 my-5 py-2 rounded-lg'>

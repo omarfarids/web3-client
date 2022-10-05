@@ -11,6 +11,38 @@
     animation: spinner 1.5s linear infinite;
 }
 
+h1{
+    font-size: 35px;
+    font-weight: 600;
+    line-height: normal;
+}
+h2{
+    font-size: 30px;
+    font-weight: 500;
+    line-height: normal;
+}
+h3{
+    font-size: 25px;
+    font-weight: 500;
+    line-height: normal;
+}
+h4{
+    font-size: 23px;
+    font-weight: 500;
+    line-height: normal;
+}
+h5{
+    font-size: 20px;
+    font-weight: 500;
+    line-height: normal;
+}
+
+@media (max-width:767px){
+    .center{
+        text-align: center;
+    }
+}
+
 @keyframes spinner {
     0% {
         transform: rotate(0deg);
