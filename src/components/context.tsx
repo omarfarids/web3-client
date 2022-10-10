@@ -4,9 +4,9 @@ import { contractABI , contractAddress } from '../utils/constants';
 
 
 declare global {
-  interface Window{
-    ethereum?:any
-  }
+    interface Window{
+        ethereum?:any
+    }
 }
 
 
@@ -31,17 +31,6 @@ type FormData = {
 
 const { ethereum } = window;
 
-const getEthereumContract = () => {
-    const provider = new ethers.providers.Web3Provider(ethereum)
-    const signer = provider.getSigner();
-    const transactionContract = new ethers.Contract(contractAddress, contractABI, signer)
-
-    
-    return transactionContract;
-}
-
-
-
 const AppContext = createContext<Partial<ContextProps>>({})
 
 const AppProvider = ({children}:any) => {
@@ -51,17 +40,52 @@ const AppProvider = ({children}:any) => {
     const [currentAccount , setCurrentAccount] = useState<string>('')
     const [formData , setFormData] = useState<FormData>({address: '', amount: '', password: '', message: ''})
     const [transactionCount , setTransactionCount] = useState<number|string|null>(localStorage.getItem('transactionCount'))
+    const [transactions, setTransactions] = useState<any[]>([]);
 
     // functions 
+    const getEthereumContract = () => {
+        const provider = new ethers.providers.Web3Provider(ethereum)
+        const signer = provider.getSigner();
+        const transactionContract = new ethers.Contract(currentAccount || contractAddress, contractABI, signer)
+    
+        return transactionContract;
+    }
+
+    const getAllTransactions = async () => {
+        try {
+            if (ethereum) {
+                const transactionsContract = getEthereumContract();
+        
+                const availableTransactions = await transactionsContract.getAllTransactions();
+        
+                const structuredTransactions = availableTransactions.map((transaction:any) => ({
+                addressTo: transaction.receiver,
+                addressFrom: transaction.sender,
+                timestamp: new Date(transaction.timestamp.toNumber() * 1000).toLocaleString(),
+                message: transaction.message,
+                keyword: transaction.keyword,
+                amount: parseInt(transaction.amount._hex) / (10 ** 18)
+                }));
+        
+                setTransactions(structuredTransactions);
+            } else {
+                console.log("Ethereum is not present");
+            }
+            } catch (error) {
+            console.log(error);
+            }
+        };
+
     const checkIfWalletConnected = async () => {
         if(!ethereum) return alert('Please install metamask!')
         
         const accounts = await ethereum.request({ method: 'eth_accounts'})
         
+        getAllTransactions()
         if(accounts.length){
             setCurrentAccount(accounts[0])
         }
-        
+
     }
     
     const checkIfTransactionsExist = async () => {
@@ -69,13 +93,14 @@ const AppProvider = ({children}:any) => {
             const transactionContract:any = getEthereumContract()
             const transactionCount = await transactionContract.getTransactionCount()
 
-            console.log(getEthereumContract())
+
             window.localStorage.setItem('transactionCount',transactionCount)
 
 
         } catch (error) {
             console.log(error)
         }
+
     }
 
     const sendTransaction = async () => {
@@ -88,7 +113,7 @@ const AppProvider = ({children}:any) => {
             await ethereum.request({
                 method: 'eth_sendTransaction',
                 params: [{
-                    from: '0xEcc7BC7d9fa79B8077690D0eF166cae3d182D91d',
+                    from: currentAccount,
                     to: formData.address,
                     gas: '0x5208',
                     value: ethers.utils.parseEther(formData.amount)._hex
@@ -129,6 +154,7 @@ const AppProvider = ({children}:any) => {
         checkIfWalletConnected()
         checkIfTransactionsExist()
     },[])
+
 
     return (
         <AppContext.Provider value={{
