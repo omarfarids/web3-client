@@ -4,7 +4,11 @@ module.exports = {
     "./src/**/*.{js,jsx,ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      gap: {
+        'xl': '50px',
+      }
+    },
     screens: {
       'sm': '480px',
       // => @media (min-width: 480px) { ... }
